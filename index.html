@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nave Espacial - Vista del Cosmos ✨</title>
+  <title>Órbita de Venus - Observatorio Espacial ✨</title>
   <style>
     * {
       margin: 0;
@@ -14,12 +14,12 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #000;
+      background-color: #020205;
       font-family: 'Segoe UI', Roboto, sans-serif;
       color: #fff;
     }
 
-    /* Fondo espacial canvas */
+    /* Canvas donde se dibuja Venus y el espacio */
     #spaceCanvas {
       position: absolute;
       top: 0;
@@ -29,7 +29,7 @@
       z-index: 1;
     }
 
-    /* Marco/Estructura de la Nave Espacial */
+    /* Marco estilo escotilla de nave espacial */
     .cockpit-overlay {
       position: absolute;
       top: 0;
@@ -37,25 +37,26 @@
       width: 100vw;
       height: 100vh;
       z-index: 2;
-      pointer-events: none; /* Permite interactuar con lo que hay debajo */
-      box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.9),
-                  inset 0 0 40px rgba(0, 229, 255, 0.2);
-      border: 12px solid rgba(20, 25, 40, 0.6);
-      background: radial-gradient(circle at center, transparent 60%, rgba(5, 10, 20, 0.85) 100%);
+      pointer-events: none;
+      box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.95),
+                  inset 0 0 50px rgba(255, 183, 77, 0.2);
+      border: 12px solid rgba(25, 20, 15, 0.7);
+      background: radial-gradient(circle at center, transparent 55%, rgba(10, 5, 2, 0.85) 100%);
     }
 
-    /* Líneas HUD de la nave */
+    /* Líneas tácticas del HUD */
     .hud-line {
       position: absolute;
-      border: 1px solid rgba(0, 229, 255, 0.25);
+      border: 1px solid rgba(255, 183, 77, 0.3);
       pointer-events: none;
+      z-index: 3;
     }
     .hud-tl { top: 30px; left: 30px; width: 60px; height: 60px; border-right: none; border-bottom: none; }
     .hud-tr { top: 30px; right: 30px; width: 60px; height: 60px; border-left: none; border-bottom: none; }
     .hud-bl { bottom: 30px; left: 30px; width: 60px; height: 60px; border-right: none; border-top: none; }
     .hud-br { bottom: 30px; right: 30px; width: 60px; height: 60px; border-left: none; border-top: none; }
 
-    /* Contenedor central de la interfaz */
+    /* Contenedor principal */
     .container {
       position: relative;
       z-index: 10;
@@ -67,17 +68,17 @@
       padding: 20px;
     }
 
-    /* Tarjeta Holográfica de la Nave */
+    /* Tarjeta holográfica */
     .space-card {
-      background: rgba(10, 15, 30, 0.7);
-      border: 1px solid rgba(0, 229, 255, 0.4);
+      background: rgba(20, 12, 5, 0.75);
+      border: 1px solid rgba(255, 183, 77, 0.4);
       backdrop-filter: blur(16px);
       padding: 35px 25px;
       border-radius: 20px;
       text-align: center;
       max-width: 440px;
       width: 100%;
-      box-shadow: 0 0 35px rgba(0, 229, 255, 0.25), inset 0 0 15px rgba(0, 229, 255, 0.15);
+      box-shadow: 0 0 40px rgba(255, 140, 0, 0.25), inset 0 0 15px rgba(255, 183, 77, 0.15);
       animation: floatCockpit 5s ease-in-out infinite;
     }
 
@@ -89,33 +90,33 @@
     .status-tag {
       font-size: 0.75rem;
       letter-spacing: 3px;
-      color: #00e5ff;
+      color: #ffb74d;
       text-transform: uppercase;
       margin-bottom: 15px;
       display: inline-block;
-      background: rgba(0, 229, 255, 0.1);
+      background: rgba(255, 183, 77, 0.12);
       padding: 4px 12px;
       border-radius: 20px;
-      border: 1px solid rgba(0, 229, 255, 0.3);
+      border: 1px solid rgba(255, 183, 77, 0.3);
     }
 
     h1 {
       font-size: 1.7rem;
       margin-bottom: 15px;
       color: #ffffff;
-      text-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
+      text-shadow: 0 0 12px rgba(255, 183, 77, 0.6);
     }
 
     p {
       font-size: 1rem;
-      color: #c0d0e0;
+      color: #e0d0c0;
       line-height: 1.6;
       margin-bottom: 25px;
     }
 
-    /* Botones Neón Futuristas */
+    /* Botones */
     .btn-universe {
-      background: linear-gradient(135deg, #0052d4, #4364f7, #6fb1fc);
+      background: linear-gradient(135deg, #e65100, #ff8f00, #ffc107);
       color: #fff;
       border: none;
       padding: 14px 28px;
@@ -125,20 +126,20 @@
       border-radius: 50px;
       cursor: pointer;
       width: 100%;
-      box-shadow: 0 0 20px rgba(67, 100, 247, 0.6);
+      box-shadow: 0 0 20px rgba(255, 143, 0, 0.6);
       transition: all 0.3s ease;
       text-transform: uppercase;
     }
 
     .btn-universe:hover {
       transform: scale(1.03);
-      box-shadow: 0 0 30px rgba(0, 229, 255, 0.9);
+      box-shadow: 0 0 30px rgba(255, 183, 77, 0.9);
     }
 
     .btn-exit {
       background: rgba(255, 255, 255, 0.08);
-      color: #88a0c0;
-      border: 1px solid rgba(0, 229, 255, 0.2);
+      color: #d0b090;
+      border: 1px solid rgba(255, 183, 77, 0.2);
       padding: 10px 20px;
       font-size: 0.85rem;
       border-radius: 50px;
@@ -160,12 +161,12 @@
 
     .special-message {
       font-size: 1.15rem;
-      color: #e0f7fc;
+      color: #fff3e0;
       font-weight: 500;
       line-height: 1.7;
       margin-bottom: 20px;
       animation: fadeIn 1.2s ease-in-out;
-      text-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+      text-shadow: 0 0 10px rgba(255, 183, 77, 0.4);
     }
 
     @keyframes fadeIn {
@@ -176,33 +177,33 @@
 </head>
 <body>
 
-  <!-- Canvas donde se renderizan las estrellas dinámicas -->
+  <!-- Canvas general -->
   <canvas id="spaceCanvas"></canvas>
 
-  <!-- Simulación del parabrisas/cabina de la nave -->
+  <!-- Efectos de la nave espacial -->
   <div class="cockpit-overlay"></div>
   <div class="hud-line hud-tl"></div>
   <div class="hud-line hud-tr"></div>
   <div class="hud-line hud-bl"></div>
   <div class="hud-line hud-br"></div>
 
-  <!-- Interfaz holográfica -->
+  <!-- Interfaz de la nave -->
   <div class="container">
     <div class="space-card">
       
-      <!-- Vista inicial -->
+      <!-- Paso 1 -->
       <div id="step1">
-        <span class="status-tag">🛸 NAVE ESPACIAL EN RUTA</span>
-        <h1>Observatorio Estelar</h1>
-        <p>Ajustando la vista de la escotilla principal hacia el centro de la galaxia...</p>
-        <button class="btn-universe" onclick="startExperience()">Iniciar Viaje Hiperespacial ✨</button>
+        <span class="status-tag">🛸 ÓRBITA EN VENUS - 0.72 UA</span>
+        <h1>Observatorio Venusiano</h1>
+        <p>Alineando la escotilla principal hacia la atmósfera de Venus y las estrellas...</p>
+        <button class="btn-universe" onclick="startExperience()">Aproximar a Venus ✨</button>
       </div>
 
-      <!-- Vista del mensaje final -->
+      <!-- Paso 2 -->
       <div id="step2" class="hidden">
         <span class="status-tag">⭐ DESTINO ALCANZADO</span>
         <div class="special-message">
-          "En un universo de infinitas posibilidades y miles de millones de galaxias, coincidió el espacio y el tiempo para conocerte. ¡Eres mi estrella favorita en todo el cosmos! ✨🌌"
+          "Así como Venus es el astro más brillante en el cielo nocturno, tú iluminas cada rincón de mi universo. ¡Eres mi estrella favorita en todo el cosmos! ✨🌌"
         </div>
         <button class="btn-exit" onclick="exitExperience()">🚀 Salir de la Nave</button>
       </div>
@@ -216,82 +217,127 @@
 
     let width, height, centerX, centerY;
     let stars = [];
-    const numStars = 1000;
-    let speed = 2; // Velocidad del movimiento estelar
-    let rotSpeed = 0.003; // Velocidad del giro
-    let rotationAngle = 0;
+    const numStars = 700;
+    
+    // Configuración de la órbita de la nave alrededor de Venus
+    let orbitAngle = 0;
+    let orbitSpeed = 0.005; 
+    let venusRadius = 140; // Tamaño del planeta
 
     function resize() {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
       centerX = width / 2;
       centerY = height / 2;
+      venusRadius = Math.min(width, height) * 0.22;
     }
 
     window.addEventListener('resize', resize);
     resize();
 
-    // Crear estrellas en un plano 3D cercano
+    // Crear fondo estrellado en 3D
     for (let i = 0; i < numStars; i++) {
       stars.push({
-        x: (Math.random() - 0.5) * width * 3,
-        y: (Math.random() - 0.5) * height * 3,
+        x: (Math.random() - 0.5) * width * 2.5,
+        y: (Math.random() - 0.5) * height * 2.5,
         z: Math.random() * width,
-        size: Math.random() * 1.5 + 0.5,
-        color: ['#ffffff', '#80d8ff', '#ffd54f', '#ff80ab', '#b388ff'][Math.floor(Math.random() * 5)]
+        size: Math.random() * 1.6 + 0.4,
+        color: ['#ffffff', '#ffe0b2', '#ffd54f', '#80d8ff', '#ffffff'][Math.floor(Math.random() * 5)]
       });
     }
 
-    // Bucle de renderizado animado (Efecto Nave en movimiento)
+    // Dibujar el Planeta Venus con iluminación y atmósfera hiperrealista
+    function drawVenus(x, y, radius) {
+      ctx.save();
+
+      // 1. Resplandor / Atmósfera Dorada Exterior
+      let atmosphere = ctx.createRadialGradient(x, y, radius * 0.85, x, y, radius * 1.4);
+      atmosphere.addColorStop(0, 'rgba(255, 183, 77, 0.8)');
+      atmosphere.addColorStop(0.5, 'rgba(230, 81, 0, 0.3)');
+      atmosphere.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+      ctx.beginPath();
+      ctx.arc(x, y, radius * 1.4, 0, Math.PI * 2);
+      ctx.fillStyle = atmosphere;
+      ctx.fill();
+
+      // 2. Cuerpo y Nubes de Venus (Gradiente 3D con luz solar lateral)
+      let venusGrad = ctx.createRadialGradient(
+        x - radius * 0.3, y - radius * 0.3, radius * 0.1, // Punto de luz
+        x, y, radius // Sombra del planeta
+      );
+      venusGrad.addColorStop(0, '#fff3e0');
+      venusGrad.addColorStop(0.2, '#ffe0b2');
+      venusGrad.addColorStop(0.5, '#ffb74d');
+      venusGrad.addColorStop(0.8, '#e65100');
+      venusGrad.addColorStop(1, '#1a0500'); // Sombra oscura del espacio
+
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fillStyle = venusGrad;
+      ctx.fill();
+
+      // 3. Patrones de nubes densas en movimiento orbital
+      ctx.globalAlpha = 0.15;
+      ctx.fillStyle = '#ffffff';
+      for (let i = -3; i <= 3; i++) {
+        ctx.beginPath();
+        ctx.ellipse(x, y + (i * radius * 0.25), radius * 0.95, radius * 0.15, orbitAngle * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1.0;
+
+      ctx.restore();
+    }
+
+    // Bucle principal de animación
     function draw() {
-      // Fondo negro con leve halo azulado
-      ctx.fillStyle = 'rgba(2, 4, 10, 0.3)';
+      // Fondo del espacio profundo con ligera estela
+      ctx.fillStyle = 'rgba(2, 2, 5, 0.3)';
       ctx.fillRect(0, 0, width, height);
 
-      rotationAngle += rotSpeed;
+      orbitAngle += orbitSpeed;
 
+      // --- Dibujar Estrellas en Movimiento ---
       for (let star of stars) {
-        // La estrella se acerca hacia la pantalla (eje Z)
-        star.z -= speed;
-
-        // Cuando la estrella pasa la pantalla, reaparece al fondo
+        star.z -= 0.8;
         if (star.z <= 0) {
           star.z = width;
-          star.x = (Math.random() - 0.5) * width * 3;
-          star.y = (Math.random() - 0.5) * height * 3;
+          star.x = (Math.random() - 0.5) * width * 2.5;
+          star.y = (Math.random() - 0.5) * height * 2.5;
         }
 
-        // Proyección 3D a 2D
         let k = 400 / star.z;
-        let px = star.x * k;
-        let py = star.y * k;
+        let px = star.x * k + centerX;
+        let py = star.y * k + centerY;
 
-        // Aplicar rotación continua al campo estelar (efecto giro de nave)
-        let rotatedX = px * Math.cos(rotationAngle) - py * Math.sin(rotationAngle);
-        let rotatedY = px * Math.sin(rotationAngle) + py * Math.cos(rotationAngle);
+        // Balanceo leve de estrellas por la órbita
+        px += Math.cos(orbitAngle) * 15;
+        py += Math.sin(orbitAngle) * 15;
 
-        let finalX = rotatedX + centerX;
-        let finalY = rotatedY + centerY;
-
-        // Dibujar solo si está dentro de la pantalla
-        if (finalX >= 0 && finalX <= width && finalY >= 0 && finalY <= height) {
-          let size = Math.max(0.1, (1 - star.z / width) * star.size * 3);
-          
+        if (px >= 0 && px <= width && py >= 0 && py <= height) {
+          let size = Math.max(0.1, (1 - star.z / width) * star.size * 2.5);
           ctx.beginPath();
-          ctx.arc(finalX, finalY, size, 0, Math.PI * 2);
+          ctx.arc(px, py, size, 0, Math.PI * 2);
           ctx.fillStyle = star.color;
-          ctx.shadowBlur = size * 4;
+          ctx.shadowBlur = size * 3;
           ctx.shadowColor = star.color;
           ctx.fill();
         }
       }
+
+      // --- Posición de Venus desplazada simulando la órbita de la nave ---
+      let venusX = centerX + Math.cos(orbitAngle) * (width * 0.15);
+      let venusY = centerY + Math.sin(orbitAngle * 0.8) * (height * 0.08);
+
+      drawVenus(venusX, venusY, venusRadius);
 
       requestAnimationFrame(draw);
     }
 
     draw();
 
-    // Activar Hiperespacio y Pantalla Completa
+    // Activar vista inmersiva al presionar el botón
     function startExperience() {
       let elem = document.documentElement;
       if (elem.requestFullscreen) {
@@ -303,9 +349,9 @@
       document.getElementById('step1').classList.add('hidden');
       document.getElementById('step2').classList.remove('hidden');
 
-      // Aumentar velocidad y rotación al activar la vista starlight
-      speed = 12;
-      rotSpeed = 0.008;
+      // Aumentar la velocidad de la órbita al hacer clic
+      orbitSpeed = 0.012;
+      venusRadius = venusRadius * 1.25; // Aproximación de la nave al planeta
     }
 
     // Salir del modo inmersivo
