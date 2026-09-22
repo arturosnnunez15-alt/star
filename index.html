@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nave Espacial - Vista del Cosmos ✨</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      color: #fff;
+    }
+
+    /* Fondo espacial canvas */
+    #spaceCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+    }
+
+    /* Marco/Estructura de la Nave Espacial */
+    .cockpit-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 2;
+      pointer-events: none; /* Permite interactuar con lo que hay debajo */
+      box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.9),
+                  inset 0 0 40px rgba(0, 229, 255, 0.2);
+      border: 12px solid rgba(20, 25, 40, 0.6);
+      background: radial-gradient(circle at center, transparent 60%, rgba(5, 10, 20, 0.85) 100%);
+    }
+
+    /* Líneas HUD de la nave */
+    .hud-line {
+      position: absolute;
+      border: 1px solid rgba(0, 229, 255, 0.25);
+      pointer-events: none;
+    }
+    .hud-tl { top: 30px; left: 30px; width: 60px; height: 60px; border-right: none; border-bottom: none; }
+    .hud-tr { top: 30px; right: 30px; width: 60px; height: 60px; border-left: none; border-bottom: none; }
+    .hud-bl { bottom: 30px; left: 30px; width: 60px; height: 60px; border-right: none; border-top: none; }
+    .hud-br { bottom: 30px; right: 30px; width: 60px; height: 60px; border-left: none; border-top: none; }
+
+    /* Contenedor central de la interfaz */
+    .container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Tarjeta Holográfica de la Nave */
+    .space-card {
+      background: rgba(10, 15, 30, 0.7);
+      border: 1px solid rgba(0, 229, 255, 0.4);
+      backdrop-filter: blur(16px);
+      padding: 35px 25px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 0 35px rgba(0, 229, 255, 0.25), inset 0 0 15px rgba(0, 229, 255, 0.15);
+      animation: floatCockpit 5s ease-in-out infinite;
+    }
+
+    @keyframes floatCockpit {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(0.3deg); }
+    }
+
+    .status-tag {
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      color: #00e5ff;
+      text-transform: uppercase;
+      margin-bottom: 15px;
+      display: inline-block;
+      background: rgba(0, 229, 255, 0.1);
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 229, 255, 0.3);
+    }
+
+    h1 {
+      font-size: 1.7rem;
+      margin-bottom: 15px;
+      color: #ffffff;
+      text-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
+    }
+
+    p {
+      font-size: 1rem;
+      color: #c0d0e0;
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+
+    /* Botones Neón Futuristas */
+    .btn-universe {
+      background: linear-gradient(135deg, #0052d4, #4364f7, #6fb1fc);
+      color: #fff;
+      border: none;
+      padding: 14px 28px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      border-radius: 50px;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 0 20px rgba(67, 100, 247, 0.6);
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+    }
+
+    .btn-universe:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 30px rgba(0, 229, 255, 0.9);
+    }
+
+    .btn-exit {
+      background: rgba(255, 255, 255, 0.08);
+      color: #88a0c0;
+      border: 1px solid rgba(0, 229, 255, 0.2);
+      padding: 10px 20px;
+      font-size: 0.85rem;
+      border-radius: 50px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-exit:hover {
+      background: rgba(255, 50, 50, 0.2);
+      color: #ff8888;
+      border-color: rgba(255, 50, 50, 0.4);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .special-message {
+      font-size: 1.15rem;
+      color: #e0f7fc;
+      font-weight: 500;
+      line-height: 1.7;
+      margin-bottom: 20px;
+      animation: fadeIn 1.2s ease-in-out;
+      text-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Canvas donde se renderizan las estrellas dinámicas -->
+  <canvas id="spaceCanvas"></canvas>
+
+  <!-- Simulación del parabrisas/cabina de la nave -->
+  <div class="cockpit-overlay"></div>
+  <div class="hud-line hud-tl"></div>
+  <div class="hud-line hud-tr"></div>
+  <div class="hud-line hud-bl"></div>
+  <div class="hud-line hud-br"></div>
+
+  <!-- Interfaz holográfica -->
+  <div class="container">
+    <div class="space-card">
+      
+      <!-- Vista inicial -->
+      <div id="step1">
+        <span class="status-tag">🛸 NAVE ESPACIAL EN RUTA</span>
+        <h1>Observatorio Estelar</h1>
+        <p>Ajustando la vista de la escotilla principal hacia el centro de la galaxia...</p>
+        <button class="btn-universe" onclick="startExperience()">Iniciar Viaje Hiperespacial ✨</button>
+      </div>
+
+      <!-- Vista del mensaje final -->
+      <div id="step2" class="hidden">
+        <span class="status-tag">⭐ DESTINO ALCANZADO</span>
+        <div class="special-message">
+          "En un universo de infinitas posibilidades y miles de millones de galaxias, coincidió el espacio y el tiempo para conocerte. ¡Eres mi estrella favorita en todo el cosmos! ✨🌌"
+        </div>
+        <button class="btn-exit" onclick="exitExperience()">🚀 Salir de la Nave</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('spaceCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width, height, centerX, centerY;
+    let stars = [];
+    const numStars = 1000;
+    let speed = 2; // Velocidad del movimiento estelar
+    let rotSpeed = 0.003; // Velocidad del giro
+    let rotationAngle = 0;
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      centerX = width / 2;
+      centerY = height / 2;
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Crear estrellas en un plano 3D cercano
+    for (let i = 0; i < numStars; i++) {
+      stars.push({
+        x: (Math.random() - 0.5) * width * 3,
+        y: (Math.random() - 0.5) * height * 3,
+        z: Math.random() * width,
+        size: Math.random() * 1.5 + 0.5,
+        color: ['#ffffff', '#80d8ff', '#ffd54f', '#ff80ab', '#b388ff'][Math.floor(Math.random() * 5)]
+      });
+    }
+
+    // Bucle de renderizado animado (Efecto Nave en movimiento)
+    function draw() {
+      // Fondo negro con leve halo azulado
+      ctx.fillStyle = 'rgba(2, 4, 10, 0.3)';
+      ctx.fillRect(0, 0, width, height);
+
+      rotationAngle += rotSpeed;
+
+      for (let star of stars) {
+        // La estrella se acerca hacia la pantalla (eje Z)
+        star.z -= speed;
+
+        // Cuando la estrella pasa la pantalla, reaparece al fondo
+        if (star.z <= 0) {
+          star.z = width;
+          star.x = (Math.random() - 0.5) * width * 3;
+          star.y = (Math.random() - 0.5) * height * 3;
+        }
+
+        // Proyección 3D a 2D
+        let k = 400 / star.z;
+        let px = star.x * k;
+        let py = star.y * k;
+
+        // Aplicar rotación continua al campo estelar (efecto giro de nave)
+        let rotatedX = px * Math.cos(rotationAngle) - py * Math.sin(rotationAngle);
+        let rotatedY = px * Math.sin(rotationAngle) + py * Math.cos(rotationAngle);
+
+        let finalX = rotatedX + centerX;
+        let finalY = rotatedY + centerY;
+
+        // Dibujar solo si está dentro de la pantalla
+        if (finalX >= 0 && finalX <= width && finalY >= 0 && finalY <= height) {
+          let size = Math.max(0.1, (1 - star.z / width) * star.size * 3);
+          
+          ctx.beginPath();
+          ctx.arc(finalX, finalY, size, 0, Math.PI * 2);
+          ctx.fillStyle = star.color;
+          ctx.shadowBlur = size * 4;
+          ctx.shadowColor = star.color;
+          ctx.fill();
+        }
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+
+    // Activar Hiperespacio y Pantalla Completa
+    function startExperience() {
+      let elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(() => {});
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      }
+
+      document.getElementById('step1').classList.add('hidden');
+      document.getElementById('step2').classList.remove('hidden');
+
+      // Aumentar velocidad y rotación al activar la vista starlight
+      speed = 12;
+      rotSpeed = 0.008;
+    }
+
+    // Salir del modo inmersivo
+    function exitExperience() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+
+      if (history.length > 1) {
+        history.back();
+      } else {
+        window.close();
+      }
+    }
+  </script>
+</body>
+</html>
